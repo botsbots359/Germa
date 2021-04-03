@@ -88,7 +88,7 @@ exports.author_create_post = [
     }
 ];
 
-// Отображать форму для удаления автора GET
+// Display Author delete form on GET.
 exports.author_delete_get = function(req, res, next) {
 
     async.parallel({
@@ -103,13 +103,13 @@ exports.author_delete_get = function(req, res, next) {
         if (results.author==null) { // No results.
             res.redirect('/catalog/authors');
         }
-        // Удачно, значит рендерим.
+        // Successful, so render.
         res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
     });
 
 };
 
-// Обработчик удаления автора POST.
+// Handle Author delete on POST.
 exports.author_delete_post = function(req, res, next) {
 
     async.parallel({
@@ -123,15 +123,15 @@ exports.author_delete_post = function(req, res, next) {
         if (err) { return next(err); }
         // Success
         if (results.authors_books.length > 0) {
-            // Автор книги. Визуализация выполняется так же, как и для GET route.
+            // Author has books. Render in same way as for GET route.
             res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
             return;
         }
         else {
-            //У автора нет никаких книг. Удалить объект и перенаправить в список авторов.
+            // Author has no books. Delete object and redirect to the list of authors.
             Author.findByIdAndRemove(req.body.authorid, function deleteAuthor(err) {
                 if (err) { return next(err); }
-                // Успех-перейти к списку авторов
+                // Success - go to author list
                 res.redirect('/catalog/authors')
             })
         }
